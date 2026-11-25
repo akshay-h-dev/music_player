@@ -102,6 +102,13 @@ flutter test
 
 ## Use of AI tools
 
-- **Figma** was used for design generation.
-- **Claude** was used to generate the initial application code.
-- **Copilot** was used for debugging and ongoing application development.
+- **Figma (Figma Make):** generated the initial UI design (player screen,
+  equalizer screen, component states). Design decisions such as the dark theme,
+  violet accent and layout came from this.
+- **Claude:** planned the development steps, wrote the Copilot/Figma prompts,
+  converted the Figma export into the first Flutter code (screens, widgets,
+  audio service, equalizer service), and designed the Low/Mid/High band-grouping
+  approach.
+- **GitHub Copilot:** used for debugging and ongoing development: local file
+  import, the reorderable queue, metadata and artwork, and fixes found while
+  testing.
