@@ -57,6 +57,14 @@ class _PlayerScreenState extends State<PlayerScreen> {
       );
   }
 
+  Future<void> _addSongs() async {
+    final count = await context.read<AudioService>().addSongsFromDevice();
+    if (!mounted || count == 0) return;
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text('$count songs added')));
+  }
+
   @override
   Widget build(BuildContext context) {
     final audio = context.watch<AudioService>();
@@ -83,6 +91,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
                         letterSpacing: -0.18,
                       ),
                     ),
+                    
                     Align(
                       alignment: Alignment.centerRight,
                       child: IconButton(
@@ -136,7 +145,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
               const SizedBox(height: 8),
               const PlaybackControls(),
               const SizedBox(height: 12),
-              const UpNextList(),
+              UpNextList(onAddSongs: _addSongs),
             ],
           ),
         ),

@@ -7,7 +7,8 @@ import '../utils/format.dart';
 
 /// Every track except the current one; tap to play.
 class UpNextList extends StatelessWidget {
-  const UpNextList({super.key});
+  const UpNextList({super.key, required this.onAddSongs});
+  final VoidCallback onAddSongs;
 
   @override
   Widget build(BuildContext context) {
@@ -35,13 +36,30 @@ class UpNextList extends StatelessWidget {
                   'Up Next',
                   style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
                 ),
-                Text(
-                  '${upcoming.length} tracks',
-                  style: const TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w500,
-                    color: Color(0xFF77717F),
-                  ),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      '${upcoming.length} tracks',
+                      style: const TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w500,
+                        color: Color(0xFF77717F),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    TextButton.icon(
+                      onPressed: onAddSongs,
+                      icon: const Icon(Icons.add_rounded, size: 16),
+                      label: const Text(
+                        'Add songs',
+                        style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),

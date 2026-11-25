@@ -4,7 +4,6 @@ import 'dart:ui' show ImageFilter;
 import 'package:flutter/material.dart';
 
 import '../models/track.dart';
-import '../theme.dart';
 
 const _waveBars = <int>[
   18, 32, 52, 70, 42, 62, 88, 54, 76, 46, 68, //
@@ -55,131 +54,132 @@ class _AlbumArtState extends State<AlbumArt>
   @override
   Widget build(BuildContext context) {
     final radius = BorderRadius.circular(24);
+    final themeColor = widget.track.themeColor;
     return Semantics(
       label: 'Artwork for ${widget.track.title}',
-      child: AspectRatio(
-        aspectRatio: 1,
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            borderRadius: radius,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.35),
-                blurRadius: 50,
-                offset: const Offset(0, 24),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          AspectRatio(
+            aspectRatio: 1,
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                borderRadius: radius,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.35),
+                    blurRadius: 50,
+                    offset: const Offset(0, 24),
+                  ),
+                ],
               ),
-            ],
-          ),
-          child: ClipRRect(
-            borderRadius: radius,
-            child: Stack(
-              fit: StackFit.expand,
-              children: [
-                DecoratedBox(
-                  decoration: BoxDecoration(gradient: widget.track.artGradient),
-                ),
-                // Soft highlight, top right.
-                DecoratedBox(
-                  decoration: BoxDecoration(
-                    gradient: RadialGradient(
-                      center: const Alignment(0.36, -0.52),
-                      radius: 0.36,
-                      colors: [
-                        const Color(0xFFB9A0FF).withValues(alpha: 0.36),
-                        const Color(0xFFB9A0FF).withValues(alpha: 0),
-                      ],
-                    ),
-                  ),
-                ),
-                // Blurred glow, bottom left.
-                Positioned(
-                  left: -40,
-                  bottom: -56,
-                  width: 176,
-                  height: 176,
-                  child: ImageFiltered(
-                    imageFilter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-                    child: DecoratedBox(
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: AppColors.accent.withValues(alpha: 0.3),
-                      ),
-                    ),
-                  ),
-                ),
-                // Center ring + dot.
-                Center(
-                  child: FractionallySizedBox(
-                    widthFactor: 0.44,
-                    heightFactor: 0.44,
-                    child: DecoratedBox(
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.white.withValues(alpha: 0.035),
-                        border: Border.all(
-                          color: Colors.white.withValues(alpha: 0.10),
+              child: ClipRRect(
+                borderRadius: radius,
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    if (widget.track.artworkBytes != null)
+                      Image.memory(
+                        widget.track.artworkBytes!,
+                        fit: BoxFit.cover,
+                        gaplessPlayback: true,
+                      )
+                    else
+                      DecoratedBox(
+                        decoration: BoxDecoration(
+                          gradient: widget.track.artGradient,
                         ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppColors.accent.withValues(alpha: 0.16),
-                            blurRadius: 60,
-                          ),
-                        ],
+                      ),
+                    // Soft highlight, top right.
+                    DecoratedBox(
+                      decoration: BoxDecoration(
+                        gradient: RadialGradient(
+                          center: const Alignment(0.36, -0.52),
+                          radius: 0.36,
+                          colors: [
+                            const Color(0xFFB9A0FF).withValues(alpha: 0.36),
+                            const Color(0xFFB9A0FF).withValues(alpha: 0),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                ),
-                Center(
-                  child: Container(
-                    width: 12,
-                    height: 12,
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Color(0xFFB9A4FF),
+                    // Blurred glow, bottom left.
+                    Positioned(
+                      left: -40,
+                      bottom: -56,
+                      width: 176,
+                      height: 176,
+                      child: ImageFiltered(
+                        imageFilter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+                        child: DecoratedBox(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: themeColor.withValues(alpha: 0.3),
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-                // Wave strip.
-                Positioned(
-                  left: 18,
-                  right: 18,
-                  bottom: 18,
-                  height: 35,
-                  child: Semantics(
-                    label: widget.playing ? 'Audio playing' : 'Audio paused',
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
-                      child: BackdropFilter(
-                        filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-                        child: ColoredBox(
-                          color: const Color(0xFF08070C).withValues(alpha: 0.5),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 7),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                for (var i = 0; i < _waveBars.length; i++) ...[
-                                  if (i > 0) const SizedBox(width: 3),
-                                  _WaveBar(
-                                    animation: _wave,
-                                    heightPct: _waveBars[i],
-                                    index: i,
-                                    playing: widget.playing,
-                                  ),
-                                ],
-                              ],
+                    // Center ring + dot.
+                    Center(
+                      child: FractionallySizedBox(
+                        widthFactor: 0.44,
+                        heightFactor: 0.44,
+                        child: DecoratedBox(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.white.withValues(alpha: 0.035),
+                            border: Border.all(
+                              color: Colors.white.withValues(alpha: 0.10),
                             ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: themeColor.withValues(alpha: 0.16),
+                                blurRadius: 60,
+                              ),
+                            ],
                           ),
                         ),
                       ),
                     ),
-                  ),
+                    Center(
+                      child: Container(
+                        width: 12,
+                        height: 12,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: themeColor.withValues(alpha: 0.85),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
-        ),
+          const SizedBox(height: 10),
+          Semantics(
+            label: widget.playing ? 'Audio playing' : 'Audio paused',
+            child: SizedBox(
+              height: 35,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  for (var i = 0; i < _waveBars.length; i++) ...[
+                    if (i > 0) const SizedBox(width: 3),
+                    _WaveBar(
+                      animation: _wave,
+                      heightPct: _waveBars[i],
+                      index: i,
+                      playing: widget.playing,
+                      themeColor: themeColor,
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -191,12 +191,14 @@ class _WaveBar extends StatelessWidget {
     required this.heightPct,
     required this.index,
     required this.playing,
+    required this.themeColor,
   });
 
   final Animation<double> animation;
   final int heightPct;
   final int index;
   final bool playing;
+  final Color themeColor;
 
   @override
   Widget build(BuildContext context) {
@@ -219,10 +221,10 @@ class _WaveBar extends StatelessWidget {
         height: math.max(3, 21 * heightPct / 100),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(2),
-          gradient: const LinearGradient(
+          gradient: LinearGradient(
             begin: Alignment.bottomCenter,
             end: Alignment.topCenter,
-            colors: [AppColors.accent, Color(0xFFC8B8FF)],
+            colors: [themeColor, themeColor.withValues(alpha: 0.75)],
           ),
         ),
       ),
