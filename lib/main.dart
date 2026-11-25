@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
-import 'models/track.dart';
 import 'screens/player_screen.dart';
 import 'services/audio_service.dart';
 import 'services/eq_service.dart';
@@ -20,7 +19,7 @@ Future<void> main() async {
     ),
   );
 
-  final audio = AudioService(tracks: kTracks);
+  final audio = AudioService(tracks: const []);
   final eq = EqService(audio.equalizer);
 
   runApp(MusicPlayerApp(audio: audio, eq: eq));

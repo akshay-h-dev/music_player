@@ -8,20 +8,20 @@
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:music_player/main.dart';
-import 'package:music_player/models/track.dart';
 import 'package:music_player/services/audio_service.dart';
 import 'package:music_player/services/eq_service.dart';
 
 void main() {
-  testWidgets('app builds on the player screen', (WidgetTester tester) async {
-    final audio = AudioService(tracks: kTracks);
+  testWidgets('app starts with an empty library', (WidgetTester tester) async {
+    final audio = AudioService(tracks: const []);
     addTearDown(audio.dispose);
     final eq = EqService(audio.equalizer);
     addTearDown(eq.dispose);
 
     await tester.pumpWidget(MusicPlayerApp(audio: audio, eq: eq));
 
-    expect(find.text('Midnight Echoes'), findsOneWidget);
+    expect(find.text('No tracks'), findsOneWidget);
     expect(find.text('Up Next'), findsOneWidget);
+    expect(find.text('No tracks in queue'), findsOneWidget);
   });
 }
