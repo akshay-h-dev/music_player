@@ -11,6 +11,7 @@ class PlaybackControls extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final audio = context.watch<AudioService>();
+    final accent = context.appAccent;
     return SizedBox(
       height: 72,
       child: FittedBox(
@@ -23,6 +24,7 @@ class PlaybackControls extends StatelessWidget {
               tooltip: 'Shuffle',
               active: audio.shuffleEnabled,
               onPressed: audio.toggleShuffle,
+              accent: accent,
             ),
             const SizedBox(width: 12),
             _SkipButton(
@@ -44,6 +46,7 @@ class PlaybackControls extends StatelessWidget {
               tooltip: 'Repeat current track',
               active: audio.repeatEnabled,
               onPressed: audio.toggleRepeat,
+              accent: accent,
             ),
           ],
         ),
@@ -58,11 +61,13 @@ class _ModeButton extends StatelessWidget {
     required this.tooltip,
     required this.active,
     required this.onPressed,
+    required this.accent,
   });
   final IconData icon;
   final String tooltip;
   final bool active;
   final VoidCallback onPressed;
+  final AppAccent accent;
 
   @override
   Widget build(BuildContext context) {
@@ -74,11 +79,9 @@ class _ModeButton extends StatelessWidget {
       style: IconButton.styleFrom(
         fixedSize: const Size(34, 34),
         padding: EdgeInsets.zero,
-        foregroundColor: active
-            ? AppColors.accentSoft
-            : const Color(0xFF6F6976),
+        foregroundColor: active ? accent.soft : const Color(0xFF6F6976),
         backgroundColor: active
-            ? AppColors.accent.withValues(alpha: 0.12)
+            ? accent.primary.withValues(alpha: 0.12)
             : Colors.transparent,
       ),
     );
@@ -117,19 +120,20 @@ class _PlayButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final accent = context.appAccent;
     return DecoratedBox(
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         boxShadow: [
           BoxShadow(
-            color: AppColors.accent.withValues(alpha: 0.32),
+            color: accent.primary.withValues(alpha: 0.32),
             blurRadius: 28,
             offset: const Offset(0, 8),
           ),
         ],
       ),
       child: Material(
-        color: AppColors.accent,
+        color: accent.primary,
         shape: const CircleBorder(),
         clipBehavior: Clip.antiAlias,
         child: InkWell(

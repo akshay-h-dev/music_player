@@ -12,6 +12,7 @@ class EqPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final eq = context.watch<EqService>();
+    final accent = context.appAccent;
     const scaleStyle = TextStyle(
       fontSize: 9,
       fontWeight: FontWeight.w500,
@@ -51,9 +52,9 @@ class EqPanel extends StatelessWidget {
                   height: 8,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: AppColors.accent,
+                    color: accent.primary,
                     boxShadow: [
-                      BoxShadow(color: AppColors.accent, blurRadius: 12),
+                      BoxShadow(color: accent.primary, blurRadius: 12),
                     ],
                   ),
                 ),
@@ -98,7 +99,7 @@ class EqPanel extends StatelessWidget {
                 OutlinedButton.styleFrom(
                   minimumSize: const Size.fromHeight(44),
                   shape: const StadiumBorder(),
-                  foregroundColor: AppColors.accentLight,
+                  foregroundColor: accent.light,
                   disabledForegroundColor: const Color(0xFF5F5A66),
                   textStyle: const TextStyle(
                     fontSize: 13,
@@ -109,7 +110,7 @@ class EqPanel extends StatelessWidget {
                     (states) => BorderSide(
                       color: states.contains(WidgetState.disabled)
                           ? const Color(0xFF3C3941)
-                          : AppColors.accent.withValues(alpha: 0.7),
+                          : accent.primary.withValues(alpha: 0.7),
                     ),
                   ),
                 ),

@@ -37,17 +37,14 @@ class _PlayerScreenState extends State<PlayerScreen> {
   void _showError(String message) {
     if (!mounted) return;
     final messenger = ScaffoldMessenger.of(context);
+    final accent = context.appAccent;
     messenger
       ..hideCurrentSnackBar()
       ..showSnackBar(
         SnackBar(
           content: Row(
             children: [
-              const Icon(
-                Icons.warning_amber_rounded,
-                size: 20,
-                color: AppColors.accentLight,
-              ),
+              Icon(Icons.warning_amber_rounded, size: 20, color: accent.light),
               const SizedBox(width: 12),
               Expanded(child: Text(message)),
             ],
@@ -69,11 +66,17 @@ class _PlayerScreenState extends State<PlayerScreen> {
   Widget build(BuildContext context) {
     final audio = context.watch<AudioService>();
     final track = audio.currentTrack;
-    final compact = MediaQuery.sizeOf(context).height < 760;
+    final height = MediaQuery.sizeOf(context).height;
+    final compact = height < 760;
+    final artworkSize = height < 640
+        ? 160.0
+        : compact
+        ? 190.0
+        : 248.0;
 
     return Scaffold(
       body: SafeArea(
-        child: SingleChildScrollView(
+        child: Padding(
           padding: EdgeInsets.fromLTRB(20, compact ? 12 : 16, 20, 16),
           child: Column(
             children: [
@@ -91,7 +94,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
                         letterSpacing: -0.18,
                       ),
                     ),
-                    
+
                     Align(
                       alignment: Alignment.centerRight,
                       child: IconButton(
@@ -111,11 +114,11 @@ class _PlayerScreenState extends State<PlayerScreen> {
               SizedBox(height: compact ? 12 : 16),
               Center(
                 child: ConstrainedBox(
-                  constraints: BoxConstraints(maxWidth: compact ? 220 : 248),
+                  constraints: BoxConstraints(maxWidth: artworkSize),
                   child: AlbumArt(track: track, playing: audio.isPlaying),
                 ),
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: compact ? 8 : 16),
               Text(
                 track.title,
                 maxLines: 1,
@@ -145,7 +148,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
               const SizedBox(height: 8),
               const PlaybackControls(),
               const SizedBox(height: 12),
-              UpNextList(onAddSongs: _addSongs),
+              Expanded(child: UpNextList(onAddSongs: _addSongs)),
             ],
           ),
         ),

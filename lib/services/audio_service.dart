@@ -37,7 +37,7 @@ class AudioService extends ChangeNotifier {
 
   final _errors = StreamController<String>.broadcast();
   final _subs = <StreamSubscription<dynamic>>[];
-  final _durations = <int, Duration>{};
+  final _durations = <Track, Duration>{};
 
   int _index = 0;
   bool _playing = false;
@@ -69,7 +69,8 @@ class AudioService extends ChangeNotifier {
           gradient: [Color(0xFF4B3971), Color(0xFF17121F), Color(0xFF332363)],
         )
       : _tracks[_index.clamp(0, _tracks.length - 1).toInt()];
-  Duration? durationOf(int index) => _durations[index];
+  Duration? durationOf(int index) =>
+      index >= 0 && index < _tracks.length ? _durations[_tracks[index]] : null;
 
   Future<void> init() async {
     try {
@@ -170,7 +171,7 @@ class AudioService extends ChangeNotifier {
             ? await probe.setFilePath(track.filePath!)
             : await probe.setAsset(track.assetPath!);
         if (d != null && !_disposed) {
-          _durations[i] = d;
+          _durations[track] = d;
           notifyListeners();
         }
       } catch (_) {
@@ -383,7 +384,7 @@ class AudioService extends ChangeNotifier {
     try {
       final duration = await probe.setFilePath(track.filePath!);
       if (duration != null && !_disposed) {
-        _durations[index] = duration;
+        _durations[track] = duration;
         notifyListeners();
       }
     } catch (_) {
@@ -421,6 +422,30 @@ class AudioService extends ChangeNotifier {
   Future<void> playIndex(int index) async {
     await player.seek(Duration.zero, index: index);
     play();
+  }
+
+  Future<void> reorderTrack(int fromIndex, int toIndex) async {
+    if (!_ready ||
+        fromIndex < 0 ||
+        fromIndex >= _tracks.length ||
+        toIndex < 0 ||
+        toIndex >= _tracks.length ||
+        fromIndex == toIndex) {
+      return;
+    }
+
+    final currentTrack = _tracks[_index];
+    final track = _tracks.removeAt(fromIndex);
+    _tracks.insert(toIndex, track);
+    _index = _tracks.indexOf(currentTrack);
+    notifyListeners();
+
+    try {
+      await player.moveAudioSource(fromIndex, toIndex);
+    } catch (e) {
+      debugPrint('Reordering queue failed: $e');
+      if (!_errors.isClosed) _errors.add("Couldn't reorder the queue");
+    }
   }
 
   Future<void> toggleShuffle() async {

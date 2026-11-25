@@ -74,6 +74,7 @@ class _Intro extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final accent = context.appAccent;
     return Column(
       children: [
         Container(
@@ -81,10 +82,10 @@ class _Intro extends StatelessWidget {
           height: 64,
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: AppColors.accent.withValues(alpha: 0.15),
+            color: accent.primary.withValues(alpha: 0.15),
             borderRadius: BorderRadius.circular(20),
           ),
-          child: const EqualizerIcon(size: 32, color: AppColors.accentSoft),
+          child: EqualizerIcon(size: 32, color: accent.soft),
         ),
         const SizedBox(height: 16),
         const Text(

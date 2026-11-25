@@ -18,6 +18,45 @@ class AppColors {
   static Color get cardBorder => Colors.white.withValues(alpha: 0.04);
 }
 
+class AppAccent extends ThemeExtension<AppAccent> {
+  const AppAccent({
+    required this.primary,
+    required this.soft,
+    required this.light,
+    required this.pale,
+  });
+
+  final Color primary;
+  final Color soft;
+  final Color light;
+  final Color pale;
+
+  @override
+  AppAccent copyWith({Color? primary, Color? soft, Color? light, Color? pale}) {
+    return AppAccent(
+      primary: primary ?? this.primary,
+      soft: soft ?? this.soft,
+      light: light ?? this.light,
+      pale: pale ?? this.pale,
+    );
+  }
+
+  @override
+  AppAccent lerp(ThemeExtension<AppAccent>? other, double t) {
+    if (other is! AppAccent) return this;
+    return AppAccent(
+      primary: Color.lerp(primary, other.primary, t)!,
+      soft: Color.lerp(soft, other.soft, t)!,
+      light: Color.lerp(light, other.light, t)!,
+      pale: Color.lerp(pale, other.pale, t)!,
+    );
+  }
+}
+
+extension AppAccentContext on BuildContext {
+  AppAccent get appAccent => Theme.of(this).extension<AppAccent>()!;
+}
+
 /// White dot with a violet ring (the slider thumb in the design).
 class RingThumbShape extends SliderComponentShape {
   const RingThumbShape({this.radius = 7});
@@ -49,18 +88,27 @@ class RingThumbShape extends SliderComponentShape {
       3,
       true,
     );
-    canvas.drawCircle(center, radius, Paint()..color = AppColors.accent);
+    canvas.drawCircle(
+      center,
+      radius,
+      Paint()..color = sliderTheme.thumbColor ?? AppColors.accent,
+    );
     canvas.drawCircle(center, radius - 3, Paint()..color = Colors.white);
   }
 }
 
-ThemeData buildAppTheme() {
+ThemeData buildAppTheme({Color accent = AppColors.accent}) {
+  final softAccent = Color.lerp(accent, Colors.white, 0.28)!;
+  final lightAccent = Color.lerp(accent, Colors.white, 0.48)!;
+  final paleAccent = Color.lerp(accent, Colors.white, 0.68)!;
   final scheme =
       ColorScheme.fromSeed(
-        seedColor: AppColors.accent,
+        seedColor: accent,
         brightness: Brightness.dark,
       ).copyWith(
-        primary: AppColors.accent,
+        primary: accent,
+        secondary: softAccent,
+        tertiary: lightAccent,
         surface: AppColors.background,
         onSurface: AppColors.textPrimary,
       );
@@ -69,17 +117,25 @@ ThemeData buildAppTheme() {
     useMaterial3: true,
     colorScheme: scheme,
     scaffoldBackgroundColor: AppColors.background,
+    extensions: [
+      AppAccent(
+        primary: accent,
+        soft: softAccent,
+        light: lightAccent,
+        pale: paleAccent,
+      ),
+    ],
     // To match the design exactly, bundle Inter and uncomment:
     // fontFamily: 'Inter',
     sliderTheme: SliderThemeData(
       trackHeight: 4,
-      activeTrackColor: AppColors.accent,
+      activeTrackColor: accent,
       inactiveTrackColor: AppColors.trackInactive,
-      thumbColor: AppColors.accent,
+      thumbColor: accent,
       thumbShape: const RingThumbShape(),
       trackShape: const RoundedRectSliderTrackShape(),
       overlayShape: const RoundSliderOverlayShape(overlayRadius: 16),
-      overlayColor: AppColors.accent.withValues(alpha: 0.16),
+      overlayColor: accent.withValues(alpha: 0.16),
       tickMarkShape: SliderTickMarkShape.noTickMark,
       disabledActiveTrackColor: AppColors.textFaint,
       disabledInactiveTrackColor: AppColors.trackInactive,
@@ -93,7 +149,7 @@ ThemeData buildAppTheme() {
         fontSize: 13,
         fontWeight: FontWeight.w500,
       ),
-      actionTextColor: AppColors.accentLight,
+      actionTextColor: lightAccent,
       insetPadding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(14),

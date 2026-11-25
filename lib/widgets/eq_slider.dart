@@ -31,11 +31,12 @@ class _EqSliderState extends State<EqSlider> {
 
   @override
   Widget build(BuildContext context) {
+    final accent = context.appAccent;
     final isZero = widget.value == 0;
     final valueColor = _dragging
-        ? AppColors.accentPale
+        ? accent.pale
         : isZero
-        ? AppColors.accentLight
+        ? accent.light
         : const Color(0xFFDDD8E8);
 
     return Column(
@@ -62,7 +63,7 @@ class _EqSliderState extends State<EqSlider> {
                 width: isZero ? 34 : 32,
                 height: isZero ? 2 : 1,
                 color: isZero
-                    ? AppColors.accentLight.withValues(alpha: 0.5)
+                    ? accent.light.withValues(alpha: 0.5)
                     : Colors.white.withValues(alpha: 0.16),
               ),
               // quarterTurns: 3 puts the minimum at the bottom.
@@ -70,9 +71,7 @@ class _EqSliderState extends State<EqSlider> {
                 quarterTurns: 3,
                 child: SliderTheme(
                   data: Theme.of(context).sliderTheme.copyWith(
-                    activeTrackColor: _dragging
-                        ? AppColors.accentSoft
-                        : AppColors.accent,
+                    activeTrackColor: _dragging ? accent.soft : accent.primary,
                   ),
                   child: Slider(
                     value: widget.value.clamp(widget.min, widget.max),

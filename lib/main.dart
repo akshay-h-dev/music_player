@@ -42,12 +42,22 @@ class MusicPlayerApp extends StatelessWidget {
         ChangeNotifierProvider<AudioService>.value(value: audio),
         ChangeNotifierProvider<EqService>.value(value: eq),
       ],
-      child: MaterialApp(
-        title: 'Music Player',
-        debugShowCheckedModeBanner: false,
-        theme: buildAppTheme(),
-        home: const PlayerScreen(),
-      ),
+      child: const _MusicPlayerAppView(),
+    );
+  }
+}
+
+class _MusicPlayerAppView extends StatelessWidget {
+  const _MusicPlayerAppView();
+
+  @override
+  Widget build(BuildContext context) {
+    final accent = context.watch<AudioService>().currentTrack.themeColor;
+    return MaterialApp(
+      title: 'Music Player',
+      debugShowCheckedModeBanner: false,
+      theme: buildAppTheme(accent: accent),
+      home: const PlayerScreen(),
     );
   }
 }
